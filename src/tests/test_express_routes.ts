@@ -4,6 +4,8 @@ import chaiHttp from 'chai-http';
 
 import { startExpress } from '../express/startExpress';
 
+import Logger from "../config/logger";
+
 chai.use(chaiHttp);
 
 describe('startExpress.ts', function () {
@@ -15,7 +17,7 @@ describe('startExpress.ts', function () {
                     expect(res).to.have.a.status(200);
 
                 }, function (err) {
-                    console.log("im a fucking error")
+                    Logger.error(err)
                 });
         });
 
@@ -25,7 +27,7 @@ describe('startExpress.ts', function () {
                 .then(function (res) {
                     expect(res).to.have.a.status(200);
                 }, function (err) {
-                    console.log("im a fucking error")
+                    Logger.error(err)
                 });
         });
 
@@ -35,7 +37,7 @@ describe('startExpress.ts', function () {
                 .then(function (res) {
                     expect(res).to.have.a.status(404);
                 }, function (err) {
-                    console.log("im a fucking error")
+                    Logger.error(err)
                 });
         });
     })
