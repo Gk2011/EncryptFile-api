@@ -4,6 +4,8 @@ import chaiHttp from 'chai-http';
 
 import spies from 'chai-spies';
 
+import Logger from "../config/logger";
+
 import { startExpress } from '../express/startExpress'
 
 chai.use(spies)
@@ -17,7 +19,7 @@ describe("src/express/controllers/dataController.ts", function () {
                 .then(function (res) {
                     expect(res.text).to.be.a("String")
                 }, function (err) {
-                    console.log("im a fucking error")
+                    Logger.error(err)
                 });
         }
         )
