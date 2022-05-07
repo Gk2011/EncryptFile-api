@@ -12,36 +12,35 @@ export const encryptView: any = function (req: Request, res: Response, next: Nex
     res.send("encryptView file route")
 }
 
+// Takes file and encrypts using password provided by user, sends file back to client.
 export const encrypt: any = function (req: Request, res: Response, next: NextFunction) {
-    var { reqpassword } = req.headers;
 
+    var { reqpassword } = req.headers;
     var content_Type = req.headers['content-type'];
     Logger.debug(`content-type is ${content_Type}`)
-
+    // Returns if no password is provided
     if (reqpassword == undefined) {
         return res.send("Please provide a password for file encryption.")
     } else {
         try {
             Logger.debug(`reqPassword is ${reqpassword}`)
 
-            // if (reqpassword == undefined) {
-            //     res.send("no password detected, unable to encryt")
-            // } else {
-                const password: String = reqpassword.toString();
+                //const password: String = reqpassword.toString();
 
                 // Create cipher components and cipher object
                 const algorithm: string = "aes-192-cbc";
                 const iv = Buffer.alloc(16, 0);
 
-                const key = scryptSync(Buffer.from(password), "salt", 24);
+                const key = scryptSync(Buffer.from(reqpassword.toString()), "salt", 24);
                 const cipher = createCipheriv(algorithm, key, iv);
 
                 var encryptedText = '';
 
-                console.log('POST request');
                 const bb = busboy({ headers: req.headers });
+
                 bb.on('file', (name, file, info) => {
                     const { filename, encoding, mimeType } = info;
+                    Logger.debug(`Info contains ${info.mimeType}`);
                     console.log(
                         `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
                         filename,
@@ -59,11 +58,11 @@ export const encrypt: any = function (req: Request, res: Response, next: NextFun
                     });
                 });
 
-                bb.on('close', () => {
-                    console.log('Done parsing form!');
-                    res.writeHead(303, { Connection: 'close', Location: '/' });
-                    res.end();
-                });
+                // bb.on('close', () => {
+                //     console.log('Done parsing form!');
+                //     res.writeHead(303, { Connection: 'close', Location: '/' });
+                //     res.end(encryptedText);
+                // });
                 req.pipe(bb);
             
         } catch (e: unknown) {
